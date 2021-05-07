@@ -31,6 +31,7 @@ def delete_user(user_id):
     if user is None:
         abort(404, 'Not found')
     user.delete()
+    storage.save()
     return jsonify({}), 200
 
 
