@@ -5,7 +5,7 @@ Sets up Flask app API
 
 from models import storage
 from api.v1.views import app_views
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, jsonify
 from os import getenv
 
 # Create a variable app, instance of Flask
@@ -24,7 +24,7 @@ def teardown(exception):
 @app.errorhandler(404)
 def page_not_found(error):
     not_found = {'error': 'Not found'}
-    return not_found
+    return jsonify(not_found)
 
 
 if __name__ == "__main__":
