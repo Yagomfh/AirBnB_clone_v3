@@ -101,8 +101,7 @@ def put_place(place_id):
             for k, v in json_dict.items():
                 if k not in ignored_keys:
                     setattr(place, k, v)
-
-            place.save()
+place.save()
             return jsonify(place.to_dict()), 200
 
     abort(404)
