@@ -26,10 +26,9 @@ def city_places(city_id):
             for place in places.values():
                 if place.city_id == city_id:
                     city_places.append(place.to_dict())
-    if city_places is not None:
-        return jsonify(city_places)
-    else:
-        abort(404)
+            return jsonify(city_places)
+    
+    abort(404)
 
 
 @app_views.route('/places/<place_id>', methods=['GET'],
@@ -77,12 +76,12 @@ def create_city_place(city_id):
 
     for city in cities.values():
         if city.id == city_id:
-            json_dict['city_id'] = city.id
+            json_dict['city_id'] = city_id
             for user in users.values():
                 if user.id == json_dict['user_id']:
                     new_place = Place(**json_dict)
                     new_place.save()
-                    return(jsonify(new_place.to_dict()), 201)
+                    return jsonify(new_place.to_dict()), 201
     abort(404)
 
 
