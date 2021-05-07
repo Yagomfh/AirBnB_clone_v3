@@ -30,7 +30,6 @@ def city_places(city_id):
         return jsonify(city_places)
     else:
         abort(404)
-        return
 
 
 @app_views.route('/places/<place_id>', methods=['GET'],
