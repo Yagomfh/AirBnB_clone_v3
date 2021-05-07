@@ -62,7 +62,7 @@ def delete_review(review_id):
 def post_review(place_id):
     """creates a review"""
     json_dict = request.get_json(silent=True)
-    user = storage.get(User, json_dict['user_id'])
+    user = storage.get(User, 'user_id')
     places = storage.all(Place)
 
     if json_dict is None:
