@@ -80,9 +80,10 @@ def create_city_place(city_id):
 
     for city in cities.values():
         if city.id == city_id:
+            json_dict['city_id'] = city.id
             for user in users.values():
                 if user.id == json_dict['user_id']:
-                    new_place = Place(json_dict)
+                    new_place = Place(**json_dict)
                     new_place.save()
                     return(jsonify(new_place.to_dict()), 201)
     abort(404)
