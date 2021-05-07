@@ -43,7 +43,6 @@ def place_id(place_id):
             return jsonify(place.to_dict())
 
     abort(404)
-    return
 
 
 @app_views.route('/places/<place_id>', methods=['DELETE'],
@@ -59,7 +58,6 @@ def del_place_id(place_id):
             return jsonify({}), 200
 
     abort(404)
-    return
 
 
 @app_views.route('/cities/<city_id>/places', methods=['POST'],
