@@ -27,7 +27,7 @@ def city_places(city_id):
                 if place.city_id == city_id:
                     city_places.append(place.to_dict())
             return jsonify(city_places)
-    
+
     abort(404)
 
 
