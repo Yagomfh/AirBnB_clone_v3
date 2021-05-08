@@ -114,7 +114,6 @@ def retrieve_place_json():
     depending of the JSON in the body of the reques"""
     data = request.get_json(silent=True)
     places = storage.all(Place)
-    print(data)
     response = []
     if data is None:
         return make_response(jsonify({'error': 'Not a JSON'}), 400)
@@ -126,6 +125,8 @@ def retrieve_place_json():
             for state_id in data['states']:
                 state = storage.get(State, state_id)
                 for city in state.cities:
+                    if 'cities' in data and city.id in data['cities']:
+                        data['cities'].pop(city.id)
                     for place in city.places:
                         response.append(place)
         if 'cities' in data:
