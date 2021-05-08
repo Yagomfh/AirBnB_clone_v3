@@ -9,7 +9,7 @@ from models.place import Place
 from models.user import User
 from models import storage
 import json
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, make_response
 from api.v1.views import app_views
 
 
@@ -114,8 +114,9 @@ def retrieve_place_json():
     depending of the JSON in the body of the reques"""
     data = request.json
     places = storage.all(Place)
+    print(data)
     response = []
-    if not data:
+    if data is None:
         return make_response(jsonify({'error': 'Not a JSON'}), 400)
     if data != {} and ('states' in data or 'cities' in data):
         print("in")
