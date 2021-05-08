@@ -112,8 +112,9 @@ def put_place(place_id):
 def retrieve_place_json():
     """Endpoint that retrieves all Place objects
     depending of the JSON in the body of the reques"""
-    data = request.json
+    data = request.get_json(silent=True)
     places = storage.all(Place)
+    print(data)
     response = []
     if data is None:
         return make_response(jsonify({'error': 'Not a JSON'}), 400)
