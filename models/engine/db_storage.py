@@ -77,17 +77,11 @@ class DBStorage:
 
     def get(self, cls, id):
         """Method to retrieve a specific object"""
-        try:
-            return self.__session.query(cls).filter(cls.id == id).one()
-        except:
-            return None
+        return self.__session.query(cls).filter(cls.id == id).one()
 
     def count(self, cls=None):
         """Method that counts the number of object of a class"""
-        if cls:
-            return self.__session.query(cls).count()
-        else:
-            total_objs = 0
-            for Class in classes.values():
-                total_objs += self.__session.query(Class).count()
-            return total_objs
+        count = 0
+        for c in self.__session.query(cls):
+            count+= self.__session.query(c).count()
+        return count
