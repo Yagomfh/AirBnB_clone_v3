@@ -118,7 +118,6 @@ def retrieve_place_json():
     if data is None:
         return make_response(jsonify({'error': 'Not a JSON'}), 400)
     if data != {} and ('states' in data or 'cities' in data):
-        print("in")
         if 'state' in data and data['states'] == []:
             if 'cities' in data and data['cities'] == []:
                 response = [place for place in places.values()]
