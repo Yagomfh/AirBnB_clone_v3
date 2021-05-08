@@ -105,3 +105,42 @@ def put_place(place_id):
             return jsonify(place.to_dict()), 200
 
     abort(404)
+
+
+@app_views.route('places_search',
+                 methods=['POST'], strict_slashes=False)
+def retrieve_place_json():
+    """Endpoint that retrieves all Place objects
+    depending of the JSON in the body of the reques"""
+    data = request.json
+    places = storage.all(Place)
+    response = []
+    if not data:
+        return make_response(jsonify({'error': 'Not a JSON'}), 400)
+    if data != {} and ('states' in data or 'cities' in data):
+        print("in")
+        if 'state' in data and data['states'] == []:
+            if 'cities' in data and data['cities'] == []:
+                response = [place for place in places.values()]
+        if 'states' in data:
+            for state_id in data['states']:
+                state = storage.get(State, state_id)
+                for city in state.cities:
+                    for place in city.places:
+                        response.append(place)
+        if 'cities' in data:
+            for city_id in data['cities']:
+                city = storage.get(City, city_id)
+                for place in city.places:
+                    response.append(place)
+    else:
+        response = [place for place in places.values()]
+    if 'amenities' in data:
+        response_copy = response.copy()
+        for place in response_copy:
+            for amenity_id in data['amenities']:
+                amenity = storage.get(Amenity, amenity_id)
+                if amenity not in place.amenities:
+                    response.remove(place)
+                    break
+    return jsonify([place.to_dict() for place in response])
