@@ -27,5 +27,14 @@ class User(BaseModel, Base):
 
     def __init__(self, *args, **kwargs):
         """initializes user"""
-        kwargs["password"] = md5(str.encode(kwargs["password"])).hexdigest()
         super().__init__(*args, **kwargs)
+
+    @property
+    def password(self):
+        """Password getter"""
+        return self._password
+
+    @password.setter
+    def password(self, pwd):
+        """hashing password values"""
+        self._password = hashlib.md5(pwd.encode()).hexdigest()
