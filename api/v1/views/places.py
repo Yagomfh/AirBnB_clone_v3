@@ -141,7 +141,12 @@ def retrieve_place_json():
         for place in response_copy:
             for amenity_id in data['amenities']:
                 amenity = storage.get(Amenity, amenity_id)
-                if amenity not in place.amenities:
-                    response.remove(place)
-                    break
+                if getenv("HBNB_TYPE_STORAGE") == "db":
+                    if amenity not in place.amenities:
+                        response.remove(place)
+                        break
+                else:
+                    if amenity.id not in place.amenity_ids:
+                        response.remove(place)
+                        break
     return jsonify([place.to_dict() for place in response])
