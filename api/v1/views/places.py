@@ -12,6 +12,8 @@ import json
 from flask import Flask, jsonify, request, abort, make_response
 from api.v1.views import app_views
 from models.state import State
+from models.amenity import Amenity
+from os import getenv
 
 
 @app_views.route('/cities/<city_id>/places', methods=['GET'],
@@ -150,4 +152,4 @@ def retrieve_place_json():
                     if amenity.id not in place.amenity_ids:
                         response.remove(place)
                         break
-    return jsonify([place.to_dict() for place in response])   
+    return jsonify([place.to_dict() for place in response])
