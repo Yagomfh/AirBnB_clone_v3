@@ -70,7 +70,7 @@ class BaseModel:
             del new_dict["_sa_instance_state"]
         classname = self.__class__.__name__
         if not FileStorage and classname == "User" and "_password" in new_dict:
-            new_dict.pop('_password', None)
+            new_dict.pop('password', None)
         return new_dict
 
     def delete(self):
