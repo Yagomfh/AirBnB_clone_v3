@@ -11,6 +11,7 @@ from models import storage
 import json
 from flask import Flask, jsonify, request, abort, make_response
 from api.v1.views import app_views
+from models.state import State
 
 
 @app_views.route('/cities/<city_id>/places', methods=['GET'],
@@ -112,37 +113,41 @@ def put_place(place_id):
 def retrieve_place_json():
     """Endpoint that retrieves all Place objects
     depending of the JSON in the body of the reques"""
-    data = request.get_json()
+    data = request.get_json(silent=True)
+    places = storage.all(Place)
+    response = []
     if data is None:
         return make_response(jsonify({'error': 'Not a JSON'}), 400)
-    states = data.get('states', [])
-    cities = data.get('cities', [])
-    amenities = data.get('amenities', [])
-    amenity_objects = []
-    for amenity_id in amenities:
-        amenity = storage.get('Amenity', amenity_id)
-        if amenity:
-            amenity_objects.append(amenity)
-    if states == cities == []:
-            places = storage.all('Place').values()
+    if data != {} and ('states' in data or 'cities' in data):
+        if 'state' in data and data['states'] == []:
+            if 'cities' in data and data['cities'] == []:
+                response = [place for place in places.values()]
+        if 'states' in data:
+            for state_id in data['states']:
+                state = storage.get(State, state_id)
+                for city in state.cities:
+                    if 'cities' in data and city.id in data['cities']:
+                        data['cities'].remove(city.id)
+                    for place in city.places:
+                        response.append(place)
+        if 'cities' in data:
+            for city_id in data['cities']:
+                city = storage.get(City, city_id)
+                for place in city.places:
+                    response.append(place)
     else:
-        places = []
-        for state_id in states:
-            state = storage.get('State', state_id)
-            state_cities = state.cities
-            for city in state_cities:
-                if city.id not in cities:
-                    cities.append(city.id)
-        for city_id in cities:
-            city = storage.get('City', city_id)
-            for place in city.places:
-                places.append(place)
-    response = []
-    for place in places:
-        place_amenities = place.amenities
-        response.append(place.to_dict())
-        for amenity in amenity_objects:
-            if amenity not in place_amenities:
-                response.pop()
-                break
-    return jsonify(reponse)
+        response = [place for place in places.values()]
+    if 'amenities' in data:
+        response_copy = response.copy()
+        for place in response_copy:
+            for amenity_id in data['amenities']:
+                amenity = storage.get(Amenity, amenity_id)
+                if getenv("HBNB_TYPE_STORAGE") == "db":
+                    if amenity not in place.amenities:
+                        response.remove(place)
+                        break
+                else:
+                    if amenity.id not in place.amenity_ids:
+                        response.remove(place)
+                        break
+    return jsonify([place.to_dict() for place in response])   
