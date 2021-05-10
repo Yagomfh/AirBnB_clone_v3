@@ -24,10 +24,7 @@ def get_place_review(place_id):
             for review in reviews.values():
                 if review.place_id == place_id:
                     all_reviews.append(review.to_dict())
-                return jsonify(all_reviews)
-
-    abort(404)
-
+            return jsonify(all_reviews)
 
 @app_views.route('/reviews/<review_id>', methods=['GET'],
                  strict_slashes=False)
@@ -95,13 +92,13 @@ def put_review(review_id):
     if json_dict is None:
         abort(400, 'Not a JSON')
 
-    for review in reviews.values():
-        if review.id == review_id:
-            for k, v in json_dict.items():
-                if k not in ignored_keys:
-                    setattr(review, k, v)
+    #  for review in reviews.values():
+    #     if review.id == review_id:
+    for k, v in json_dict.items():
+        if k not in ignored_keys:
+            setattr(review, k, v)
 
-            review.save()
-            return jsonify(review.to_dict()), 200
+    review.save()
+    return jsonify(review.to_dict()), 200
 
     abort(404)
