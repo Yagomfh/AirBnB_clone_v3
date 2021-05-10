@@ -46,16 +46,11 @@ def get_review(review_id):
                  strict_slashes=False)
 def delete_review(review_id):
     """deletes a review"""
-    reviews = storage.all(Review)
-
-    for review in reviews.values():
-        if review.id == review_id:
-            review.delete()
-            storage.save()
-            return jsonify({}), 200
-
-    abort(404)
-
+    review = storage.get(Review, review_id)
+    if review is None:
+        abort(404, 'Not found')
+    storage.delete(review)
+    return jsonify({}), 200
 
 @app_views.route('/places/<place_id>/reviews', methods=['POST'],
                  strict_slashes=False)
