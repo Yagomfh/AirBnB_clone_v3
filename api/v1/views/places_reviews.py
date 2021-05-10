@@ -62,25 +62,26 @@ def delete_review(review_id):
 def post_review(place_id):
     """creates a review"""
     json_dict = request.get_json(silent=True)
-    place = storage.get(Place, place_id)
+    places = storage.all(Place)
 
-    if place is None:
-        abort(404)
     if json_dict is None:
         abort(400, 'Not a JSON')
     if 'user_id' not in json_dict:
         abort(400, 'Missing user_id')
-    else:
-        user = storage.get(User, json_dict["user_id"])
-        if user is None:
-            abort(404)
     if 'text' not in json_dict:
         abort(400, 'Missing text')
 
-    json_dict['place_id'] = place.id
-    review = Review(**json_dict)
-    review.save()
-    return jsonify(review.to_dict()), 201
+    for place in places.values():
+        if place.id == place_id:
+            json_dict["place_id"] = place_id
+
+            user = storage.get(User, json_dict["user_id"])
+
+            if user is not None:
+                new_review = Review(**json_dict)
+                new_review.save()
+                return jsonify(new_review.to_dict()), 201
+    abort(404)
 
 
 @app_views.route('/reviews/<review_id>', methods=['PUT'],
