@@ -46,6 +46,9 @@ def get_review(review_id):
                  strict_slashes=False)
 def delete_review(review_id):
     """deletes a review"""
+    if storage.get(Review, review_id) is None:
+        abort(404, 'Not found')
+
     reviews = storage.all(Review)
 
     for review in reviews.values():
