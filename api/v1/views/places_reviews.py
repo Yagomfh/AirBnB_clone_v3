@@ -88,6 +88,9 @@ def post_review(place_id):
                  strict_slashes=False)
 def put_review(review_id):
     """update a review"""
+    if storage.get(Review, review_id) is None:
+        abort(404, 'Not found')
+
     json_dict = request.get_json(silent=True)
     reviews = storage.all(Review)
     ignored_keys = ['created_at', 'updated_at', 'id', 'user_id', 'place_id']
